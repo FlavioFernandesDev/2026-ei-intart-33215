@@ -2,17 +2,20 @@
 
 Depois de uma primeira abordagem ao dataset reparei que este problema é um problema binario, isto é, o modelo tem de distinguir casos malignos de casos benignos (M/B). O dataset tem 569 amostras e 30 variaveis numericas extraidas de imagens de biopsias mamarias. Isto quer dizer que os dados ja nao sao a imagem original, mas sim uma representacao numerica criada a partir dela.
 
-A distribuicao das classes não está perfeitamente equilibrada: existem 212 casos malignos e 357 casos benignos. Usei um split estratificado para manter esta proporcao no treino e no teste.
+A distribuicao das classes não está perfeitamente equilibrada: existem 212 casos malignos e 357 casos benignos. Usei um split estratificado para manter esta proporcao no treino e no teste. Isto é fiz um split para manter esta proporção. 
 
-O modelo baseline foi uma LogisticRegression com StandardScaler. Usei o StandardScaler porque as variaveis estao em escalas diferentes, e isso influencia modelos lineares. Com random_state=42, o modelo obteve uma accuracy de cerca de 0.9825 no conjunto de teste.
+O modelo baseline foi uma LogisticRegression, que é bastante comum para problemas binarios, com StandardScaler. Usei o StandardScaler porque as variaveis estao em escalas diferentes, e isso influencia modelos lineares. E assim o modelo faz uma "padronização" dos dados para o modelo não dar demsadiada importancia porque um valor é alto. 
+Com random_state=42, para bloquear a aleatoridade de fazer split dos dados para este processo ser repetivel e obter os mesmos resultados no futuro, o modelo obteve uma accuracy de cerca de 0.9825 no conjunto de teste.
 
-## Teoria que apliquei
+## Teoria: 
 
-Este trabalho usa aprendizagem supervisionada, porque o dataset ja vem com a resposta certa para cada amostra. Cada linha representa uma biopsia e cada target indica se o caso é maligno ou benigno. O objetivo do modelo é aprender padrões nos dados de treino para depois prever a classe de exemplos que ainda nao viu.
+Este trabalho usa aprendizagem supervisionada, porque o dataset já vem com a resposta certa para cada amostra.  
+ Cada linha representa uma biopsia e cada target indica se o caso é maligno ou benigno. O objetivo do modelo é aprender padrões nos dados de treino para depois prever a classe de exemplos que ainda nao viu.
 
-O problema é de classificacao, nao de regressao, porque queremos prever uma categoria e nao um valor continuo. Neste caso ha duas classes, por isso é uma classificacao binaria. A classe `malignant` representa casos malignos e a classe `benign` representa casos benignos.
+O problema é de classificacao, nao de regressao, porque queremos prever uma categoria e nao um valor continuo, ou seja como vimos j´+a anteriormente é de classificação e binario.  
+A classe `malignant` representa casos malignos e a classe `benign` representa casos benignos.
 
-As 30 variaveis sao caracteristicas numericas extraidas das imagens. Isto torna o problema mais facil para modelos classicos de machine learning, porque em vez de trabalhar diretamente com pixels o modelo trabalha com medidas ja resumidas. Ao mesmo tempo, isto tambem limita o modelo, porque ele so consegue usar a informacao que esta nessas variaveis.
+As 30 variaveis sao caracteristicas numericas extraidas das imagens. Isto torna o problema mais facil para modelos classicos de machine learning, porque em vez de trabalhar diretamente com pixels o modelo trabalha com medidas ja resumidas. Ao mesmo tempo, isto tambem limita o modelo, porque estamos a usar "um nivel de abstração" e a perder informação.
 
 Antes de treinar o modelo dividi os dados em treino e teste. O treino serve para o modelo aprender. O teste serve para avaliar o modelo em dados que nao foram usados durante o treino. Isto é importante porque um modelo pode decorar os dados de treino e parecer muito bom, mas depois falhar em dados novos. Usei `random_state=42` para o resultado ser reproduzivel.
 
@@ -37,14 +40,16 @@ Isto significa que o modelo acertou 41 casos malignos e 71 benignos. Errou 1 cas
 
 ## Reflexao critica
 
-Quando uma imagem é reduzida a um conjunto de numeros perde-se parte da informacao visual original. As 30 caracteristicas resumem medidas como raio, textura, area e concavidade, mas deixam de mostrar a forma completa da biopsia, a distribuicao espacial dos tecidos e outros detalhes visuais que podem ser importantes para um diagnostico.
+Quando uma imagem é reduzida a um conjunto de numeros perde-se parte da informacao visual original, ou seja estamos a perder informação e confiar nessa conversão para numeros que podem haver erros. As 30 caracteristicas resumem medidas como raio, textura, area e concavidade, mas deixam de mostrar a forma completa da biopsia, a distribuicao espacial dos tecidos e outros detalhes visuais que podem ser importantes para um diagnostico.
 
-Na imagem original pode existir informacao que estas caracteristicas nao capturam bem, por exemplo padroes locais, irregularidades pequenas, zonas suspeitas muito especificas ou relacoes espaciais entre diferentes partes da imagem. Ao trabalhar apenas com numeros, ficamos dependentes das caracteristicas que alguem decidiu extrair previamente.
+Na imagem original pode haver informacao que estas caracteristicas nao capturam bem, por exemplo padroes tao "pessoais" e muito especificas que nao sejam extraídas para numeros porque nao foi pensada aquela possibilidade. Ou seja, ao trabalhar apenas com numeros, ficamos dependentes das caracteristicas que alguem decidiu extrair previamente.
 
 O erro que considero mais grave na confusion matrix é prever um caso maligno como benigno. Neste dataset isso corresponde a uma linha real "malignant" ser classificada na coluna "benign". Este falso benigno é perigoso porque pode atrasar o diagnostico e o tratamento de uma pessoa que realmente tem cancro.
 
-Um falso maligno tambem é um erro importante, porque pode causar ansiedade, exames extra e custos desnecessarios. Mesmo assim, em contexto clinico, deixar passar um caso maligno parece-me mais grave do que sinalizar um caso benigno como suspeito.
+Um falso maligno tambem é um erro importante, porque pode causar ansiedade, exames extra e custos desnecessarios. Mesmo assim, em contexto clinico, deixar passar um caso maligno parece-me mais grave do que sinalizar um caso benigno como suspeito porque depois podem e devem sempre exisitir metodos para uma analise mais precisa com exames medicos.
 
-Tambem é importante nao confiar cegamente no modelo so porque a accuracy é alta. Este dataset é pequeno e limpo, por isso os resultados podem parecer melhores do que seriam num hospital real. Na pratica seria preciso testar com mais dados, dados de hospitais diferentes e validacao feita por especialistas antes de usar isto para apoiar decisoes clinicas.
+Tambem é importante nao confiar cegamente no modelo so porque a accuracy é alta. Este dataset é pequeno e limpo, por isso os resultados podem parecer melhores do que seriam num hospital real. Na pratica seria preciso testar com mais dados, dados de hospitais diferentes, e a propria cultura e talvez tom de pele pode afetar a leitura e intrepetação da imagem oara numeros, além disso as validações devem ser feitas por especialistas de oncologia. 
 
-Para mim, este modelo serve como baseline: é um primeiro ponto de comparacao. Ele mostra que dados tabulares ja conseguem bons resultados, mas tambem mostra a limitacao de nao usar a imagem original. Nas semanas seguintes, ao trabalhar com imagens, vou conseguir comparar se os pixels ou uma CNN conseguem capturar informacao que estas 30 variaveis nao capturam.
+Para mim, este modelo serve como baseline: é um primeiro ponto de comparacao.  
+
+Ele mostra que dados tabulares ja conseguem bons resultados, mas tambem mostra a limitacao de nao usar a imagem original. E que podemos estar a perder informação e confiar em extração que pode estar incorreta. 
