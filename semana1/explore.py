@@ -11,6 +11,7 @@ RANDOM_STATE = 42
 
 
 def load_data():
+    # Carrego o dataset e transformo em DataFrame para ser mais facil de ler.
     data = load_breast_cancer()
     x = pd.DataFrame(data.data, columns=data.feature_names)
     y = pd.Series(data.target, name="target")
@@ -19,6 +20,7 @@ def load_data():
 
 
 def build_model():
+    # O scaler normaliza as variaveis antes da regressao logistica.
     return Pipeline(
         [
             ("scaler", StandardScaler()),
@@ -38,6 +40,7 @@ def get_class_distribution(y, target_names):
 def run_baseline(show_plot=False):
     data, x, y, target_names = load_data()
 
+    # O stratify mantem a proporcao entre benigno e maligno no treino/teste.
     x_train, x_test, y_train, y_test = train_test_split(
         x,
         y,
@@ -47,6 +50,7 @@ def run_baseline(show_plot=False):
     )
 
     model = build_model()
+    # Primeiro o modelo aprende com o treino, depois prevê exemplos do teste.
     model.fit(x_train, y_train)
     y_pred = model.predict(x_test)
 
@@ -65,6 +69,7 @@ def run_baseline(show_plot=False):
         "feature_summary": x.describe(),
         "model": model,
         "accuracy": accuracy_score(y_test, y_pred),
+        # Labels [0, 1] significam [malignant, benign].
         "confusion_matrix": confusion_matrix(y_test, y_pred, labels=[0, 1]),
         "classification_report": classification_report(
             y_test,
