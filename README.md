@@ -8,5 +8,5 @@ Repositório organizado por semanas:
 
 - `semana1/` — Baseline com dados tabulares (`load_breast_cancer` + scikit-learn)
 - `semana2/` — Exploração de imagens médicas (MedMNIST: BreastMNIST + PathMNIST)
-- `semana3/` — Por desenvolveer
+- `semana3/` — Modelos clássicos sobre pixels achatados (BreastMNIST + scikit-learn)
 - `semana4/` — Por desenvolver
