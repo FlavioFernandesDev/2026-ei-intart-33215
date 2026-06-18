@@ -1,0 +1,6 @@
+medmnist
+matplotlib
+numpy
+scikit-learn
+torch
+torchvision

@@ -9,4 +9,4 @@ Repositório organizado por semanas:
 - `semana1/` — Baseline com dados tabulares (`load_breast_cancer` + scikit-learn)
 - `semana2/` — Exploração de imagens médicas (MedMNIST: BreastMNIST + PathMNIST)
 - `semana3/` — Modelos clássicos sobre pixels achatados (BreastMNIST + scikit-learn)
-- `semana4/` — Por desenvolver
+- `semana4/` — CNN simples com PyTorch sobre BreastMNIST
